@@ -121,7 +121,10 @@
       position: 'topleft',
     }).addTo(map);
 
-    //control that shows Project Data on click
+    // control that shows Project Data on click
+    // This control lifted from http://leafletjs.com/examples/choropleth/
+    // Still not sure precisely how it works- have to investigate
+
     var info = L.control();
 
     info.onAdd = function (map) {

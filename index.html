@@ -64,7 +64,7 @@
     background: rgba(255,255,255,1);
     box-shadow: 0 0 15px rgba(0,0,0,0.2);
     border-radius: 5px;
-    width: 200px;
+    width: 300px;
 }
 .info h4 {
     margin: 0 0 5px;
@@ -136,7 +136,7 @@
     // method that we will use to update the control based on feature properties passed
     info.update = function (props) {
       this._div.innerHTML = (props ?
-         '<b>' + props.Title +'</b>'
+         '<b>' + props.Title + '</b>' + '<br><br>' + props.Project_Leader + ' - Project Leader(s)<br><br><a href="https://necsc.umass.edu' + props.Path + '" target="_blank">More Information...</a><br><br><b>Science Themes:</b><br>' + props.Science_Themes
       : 'Click on a marker to see information about that project');
       };
 
@@ -191,7 +191,7 @@
     map.addLayer(centerpointlayer);
     var clusters = L.markerClusterGroup.layerSupport({
       showCoverageOnHover: false,
-      disableClusteringAtZoom: 6
+      // disableClusteringAtZoom: 6
       // zoomToBoundsOnClick: false,
     });
     clusters.addLayer(centerpointlayer);

@@ -1,0 +1,28 @@
+/* Map won't display unless you style it. */
+body,
+html,
+#map {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+
+/* Styling the filter box which uses query extension of L.esri.featureLayer */
+#query {
+  position: absolute;
+  top: 10px;
+  left: 50px;
+  z-index: 1000;
+  padding: 6px 8px;
+  font: 14px/16px Arial, Helvetica, sans-serif;
+  background: white;
+  background: rgba(255,255,255,1);
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  border-radius: 5px;
+}
+
+#query select {
+  font-size: 16px;
+}

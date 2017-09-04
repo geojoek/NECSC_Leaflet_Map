@@ -44,73 +44,73 @@
 
 <!-- css styling the map div used below -->
 
-<style>
-  html,
-  body,
-  #map {
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    padding: 0;
+  <style>
+    html,
+    body,
+    #map {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+
+  <!-- css styling of the information div used below -->
+  <style>
+  .info {
+      padding: 6px 8px;
+      font: 14px/16px Arial, Helvetica, sans-serif;
+      background: white;
+      background: rgba(255,255,255,1);
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      border-radius: 5px;
+      width: 300px;
   }
-</style>
-
-<!-- css styling of the information div used below -->
-<style>
-.info {
-    padding: 6px 8px;
-    font: 14px/16px Arial, Helvetica, sans-serif;
-    background: white;
-    background: rgba(255,255,255,1);
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    border-radius: 5px;
-    width: 300px;
-}
-.info h4 {
-    margin: 0 0 5px;
-    color: #777;
-}
-</style>
-
-<!-- Styling the filter box which uses query extension of L.esri.featureLayer -->
-
-<style>
-  #query {
-    position: absolute;
-    top: 10px;
-    left: 50px;
-    z-index: 1000;
-    padding: 6px 8px;
-    font: 14px/16px Arial, Helvetica, sans-serif;
-    background: white;
-    background: rgba(255,255,255,1);
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    border-radius: 5px;
+  .info h4 {
+      margin: 0 0 5px;
+      color: #777;
   }
+  </style>
 
-  #query select {
-    font-size: 16px;
-  }
-</style>
+  <!-- Styling the filter box which uses query extension of L.esri.featureLayer -->
 
-<div id="map"></div>
+  <style>
+    #query {
+      position: absolute;
+      top: 10px;
+      left: 50px;
+      z-index: 1000;
+      padding: 6px 8px;
+      font: 14px/16px Arial, Helvetica, sans-serif;
+      background: white;
+      background: rgba(255,255,255,1);
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      border-radius: 5px;
+    }
 
-<div id="query" class="leaflet-bar">
-<label>
-  Filter by</br>Science Theme:
-  <select id="Science_Themes">
-    <!-- make sure to encase string values in single quotes for valid sql -->
-    <option value='1=1'>Any</option>
-    <option value="Science_Themes LIKE '%Climate impacts on Atlantic and Great Lakes coastal and nearshore environments%'">Climate impacts on Atlantic and Great Lakes coastal and nearshore environments</option>
-    <option value="Science_Themes LIKE '%Climate impacts on freshwater resources and ecosystems%'">Climate impacts on freshwater resources and ecosystems</option>
-    <option value="Science_Themes LIKE '%Climate impacts on land-use and land-cover change%'">Climate impacts on land-use and land-cover change</option>
-    <option value="Science_Themes LIKE '%Climate projections and assessments%'">Climate projections and assessments</option>
-    <option value="Science_Themes LIKE '%Ecological vulnerability and species response to climate variability and change%'">Ecological vulnerability and species response to climate variability and change</option>
-    <option value="Science_Themes LIKE '%Impacts of climate variability and change on cultural resources%'">Impacts of climate variability and change on cultural resources</option>
-    <!-- <option value="Science_Themes='Climate projections and assessments'">West</option> -->
-  </select>
-</label>
-</div>
+    #query select {
+      font-size: 16px;
+    }
+  </style>
+
+  <!-- <div id="map"></div> -->
+
+  <div id="query" class="leaflet-bar">
+  <label>
+    Filter by</br>Science Theme:
+    <select id="Science_Themes">
+      <!-- make sure to encase string values in single quotes for valid sql -->
+      <option value='1=1'>Any</option>
+      <option value="Science_Themes LIKE '%Climate impacts on Atlantic and Great Lakes coastal and nearshore environments%'">Climate impacts on Atlantic and Great Lakes coastal and nearshore environments</option>
+      <option value="Science_Themes LIKE '%Climate impacts on freshwater resources and ecosystems%'">Climate impacts on freshwater resources and ecosystems</option>
+      <option value="Science_Themes LIKE '%Climate impacts on land-use and land-cover change%'">Climate impacts on land-use and land-cover change</option>
+      <option value="Science_Themes LIKE '%Climate projections and assessments%'">Climate projections and assessments</option>
+      <option value="Science_Themes LIKE '%Ecological vulnerability and species response to climate variability and change%'">Ecological vulnerability and species response to climate variability and change</option>
+      <option value="Science_Themes LIKE '%Impacts of climate variability and change on cultural resources%'">Impacts of climate variability and change on cultural resources</option>
+      <!-- <option value="Science_Themes='Climate projections and assessments'">West</option> -->
+    </select>
+  </label>
+  </div>
 
 </head>
 
@@ -187,6 +187,7 @@
     var ProjectMap = L.esri.featureLayer ({
       url: 'https://services.arcgis.com/2gdL2gxYNFY2TOUb/arcgis/rest/services/NECSC_Test_Data/FeatureServer/1',
       //making the polygons invisible
+      stroke: false,
       weight: 0,
       fillOpacity: 0,
       // this snippet creates LatLng object 'center'.  apparently can't do this with layer.getBounds().getCenter(); I don't know why.
@@ -223,36 +224,65 @@
 
     var centerpointlayer = L.layerGroup();
 
-
     var sciencetheme = document.getElementById('Science_Themes');
-
     sciencetheme.addEventListener('change', function(){
-      centerpointlayer.clearLayers();
-      ProjectMap.setWhere(sciencetheme.value);
-      console.clear();
-      console.log(sciencetheme.value);
-      ProjectMap.setStyle({
-        weight: 1,
-        fillOpacity: 0.5,
+      ProjectMap.setWhere(sciencetheme.value, function(){
+        // centerpointlayer.clearLayers();
+        console.clear();
+        console.log(sciencetheme.value);
       });
+      ProjectMap.refresh();
+      ProjectMap.eachActiveFeature(function(layer){
+        layer.setStyle({
+          fillOpacity: 0,
+        })
+      });
+    });
+    // });
 
-        ProjectMap.eachActiveFeature(function(layer){
-          console.log(layer.feature.properties.Science_Themes);
-          var bounds = layer.getBounds();
-          var center = bounds.getCenter();
-          var centerpoints = L.marker(center);
+    ProjectMap.on('load', function(){
+      centerpointlayer.clearLayers();
+      // ProjectMap.setStyle({
+      //   stroke: false,
+      //   weight: 0,
+      //   fillOpacity: 0,
+      // });
+      ProjectMap.eachActiveFeature(function(layer){
+        console.log(layer.feature.properties.Science_Themes);
+        var bounds = layer.getBounds();
+        var center = bounds.getCenter();
+        var centerpoints = L.marker(center);
 
-          centerpointlayer.addLayer(centerpoints);
-          map.addLayer(centerpointlayer);
+        centerpointlayer.addLayer(centerpoints);
+        map.addLayer(centerpointlayer);
 
-          centerpoints.on('click', function(e) {
-                map.fitBounds(bounds);
-                layer.setStyle({
-                  fillOpacity: 0.5,
-                });
-                info.update(layer.feature.properties);
-              });
+        centerpoints.on('click', function(e) {
+          // Including the ProjectMap.setstyle method here results in blue outlines being created
+          // whenever layer gets refreshed / .setWhere is invoked above... and then further styling gets ignored
+          // for on.Click events
+          // Have to find way to reset previously selected features / styling of whole layer on each SetWhere and on.click event...
+
+          // ProjectMap.setStyle({
+          //   weight: 0,
+          //   fillOpacity: 0,
+          // });
+          // ProjectMap.setFeatureStyle(layer.feature.properties.OBJECTID,{
+          //   stroke: false,
+          //   weight: 0,
+          //   fillOpacity: 0,
+          // });
+          info.update(layer.feature.properties);
+          map.fitBounds(bounds);
+          ProjectMap.eachActiveFeature(function(layer){
+            layer.setStyle({
+              fillOpacity: 0,
+            })
+          });
+          layer.setStyle({
+            fillOpacity: 0.5,
+          });
         });
+      });
     });
 
     //Creating the markerClusters
@@ -279,7 +309,7 @@
 
     var clusters = L.markerClusterGroup.layerSupport({
       showCoverageOnHover: false,
-      disableClusteringAtZoom: 6
+      // disableClusteringAtZoom: 6
       // zoomToBoundsOnClick: false,
     });
     clusters.addLayer(centerpointlayer);

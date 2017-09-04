@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Query Test ESRI Leafletl</title>
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+
+  <!-- Loading Font Awesome -->
+  <!-- <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"/> -->
+
+  <!-- Loading Leaflet library -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
+    integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
+    crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
+    integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
+    crossorigin=""></script>
+
+  <!-- Loading ESRI Leaflet -->
+  <script src="https://unpkg.com/esri-leaflet@2.0.8/dist/esri-leaflet.js"></script>
+  <!-- <script src="https://unpkg.com/@turf/turf@3.5.2/turf.min.js"></script> -->
+
+  <!-- Loading ESRI geocoder to use for searching NECSC Database-->
+  <!-- <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.2.6/dist/esri-leaflet-geocoder.css">
+  <script src="https://unpkg.com/esri-leaflet-geocoder@2.2.6"></script> -->
+
+  <!-- Loading Mapzen geocoding plugin for search -->
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-geocoder-mapzen/1.9.2/leaflet-geocoder-mapzen.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-geocoder-mapzen/1.9.2/leaflet-geocoder-mapzen.js"></script> -->
+
+  <!-- Loading Leaflet.zoomhome (stored locally) -->
+  <!-- <link rel="stylesheet" href="scripts/leaflet.zoomhome.css"/>
+  <script src="scripts/leaflet.zoomhome.min.js"></script> -->
+
+
+  <!-- Loading Leaflet-markercluster -->
+  <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.0.6/dist/MarkerCluster.css"></script> -->
+  <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.0.6/dist/MarkerCluster.Default.css"></script> -->
+  <!-- <script src="https://unpkg.com/leaflet.markercluster@1.0.6/dist/leaflet.markercluster.js"></script> -->
+
+  <!-- Loading Leaflet.MarkerCluster.LayerSupport -->
+  <!-- <script src="https://unpkg.com/leaflet.markercluster.layersupport@1.0.5/dist/leaflet.markercluster.layersupport.js"></script> -->
+</head>
+
+<body>
+
+  <div id="map"></div>
+
+  <!-- Creating the map object / script -->
+
+  <script>
+    var map = L.map('map', {
+      center: [42.389810, -72.524684],
+      zoom: 5,
+      // zoomControl: false,
+
+    });
+
+    var esriTopo = L.esri.basemapLayer('Topographic').addTo(map);
+
+    var ProjectMap = L.esri.featureLayer ({
+      url: 'https://services.arcgis.com/2gdL2gxYNFY2TOUb/arcgis/rest/services/NECSC_Test_Data/FeatureServer/1',
+      //making the polygons invisible
+      weight: 1,
+      fillOpacity: 0.5,
+    }).addTo(map);
+
+    // Loading controls
+    // var zoomHome = L.Control.zoomHome({
+    //   position: 'topleft',
+    //   homeCoordinates: [42.389810, -72.524684],
+    //   homeZoom: 5
+    // });
+    // zoomHome.addTo(map);
+
+</script>
+</body>
+</html>

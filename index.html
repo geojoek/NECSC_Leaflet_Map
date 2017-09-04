@@ -146,7 +146,7 @@
     ProjectMap.on('load', function(){
       centerpointlayer.clearLayers();
       ProjectMap.eachActiveFeature(function(layer){
-        console.log(layer.feature.properties.Science_Themes);
+        // console.log(layer.feature.properties.Science_Themes);
         var bounds = layer.getBounds();
         var center = bounds.getCenter();
         var centerpoints = L.marker(center);

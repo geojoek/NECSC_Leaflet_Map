@@ -18,11 +18,6 @@
 
   <!-- Loading ESRI Leaflet -->
   <script src="https://unpkg.com/esri-leaflet@2.0.8/dist/esri-leaflet.js"></script>
-  <!-- <script src="https://unpkg.com/@turf/turf@3.5.2/turf.min.js"></script> -->
-
-  <!-- Loading ESRI geocoder to use for searching NECSC Database-->
-  <!-- <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.2.6/dist/esri-leaflet-geocoder.css">
-  <script src="https://unpkg.com/esri-leaflet-geocoder@2.2.6"></script> -->
 
   <!-- Loading Mapzen geocoding plugin for search -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-geocoder-mapzen/1.9.2/leaflet-geocoder-mapzen.css">
@@ -31,7 +26,6 @@
   <!-- Loading Leaflet.zoomhome (stored locally) -->
   <link rel="stylesheet" href="scripts/leaflet.zoomhome.css"/>
   <script src="scripts/leaflet.zoomhome.min.js"></script>
-
 
   <!-- Loading Leaflet-markercluster -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.0.6/dist/MarkerCluster.css"></script>
@@ -79,7 +73,7 @@
       position: absolute;
       top: 10px;
       left: 50px;
-      z-index: 1000;
+      z-index: 500;
       padding: 6px 8px;
       font: 14px/16px Arial, Helvetica, sans-serif;
       background: white;
@@ -89,18 +83,25 @@
     }
 
     #query select {
-      font-size: 16px;
+      font-size: 12px;
     }
   </style>
 
   <!-- <div id="map"></div> -->
 
+</head>
+
+<body>
+  <!-- Creating container for the map -->
+  <div id="map"></div>
+  <!-- Creating the div for the query box and populating filters -->
   <div id="query" class="leaflet-bar">
+
   <label>
-    Filter by</br>Science Theme:
+    <em>Filter by:</em></br>Science Theme
     <select id="Science_Themes">
       <!-- make sure to encase string values in single quotes for valid sql -->
-      <option value='1=1'>Any</option>
+      <option value='1=1'>All</option>
       <option value="Science_Themes LIKE '%Climate impacts on Atlantic and Great Lakes coastal and nearshore environments%'">Climate impacts on Atlantic and Great Lakes coastal and nearshore environments</option>
       <option value="Science_Themes LIKE '%Climate impacts on freshwater resources and ecosystems%'">Climate impacts on freshwater resources and ecosystems</option>
       <option value="Science_Themes LIKE '%Climate impacts on land-use and land-cover change%'">Climate impacts on land-use and land-cover change</option>
@@ -112,18 +113,12 @@
   </label>
   </div>
 
-</head>
-
-<body>
-  <!-- Creating container for the map -->
-  <div id="map"></div>
-
   <!-- Creating the map object / script -->
 
   <script>
   // This creates the map object itself
     var map = L.map('map', {
-      center: [42.389810, -72.524684],
+      center: [43.726372, -79.405235],
       zoom: 5,
       zoomControl: false,
 
@@ -139,24 +134,7 @@
     });
     zoomHome.addTo(map);
 
-    // Adding search bar that also searches NECSC data
-    // var arcgisOnline = L.esri.Geocoding.arcgisOnlineProvider();
-    // var NESCdata = L.esri.Geocoding.featureLayerProvider({
-    //   url: 'https://services.arcgis.com/2gdL2gxYNFY2TOUb/arcgis/rest/services/NECSC_Test_Data/FeatureServer/1',
-    //   searchFields: ['Title', 'Affiliations', 'Body', 'Partners', 'Project_Fiscal_Year', 'Project_Investigators', 'ProjectLeader','Project_Other','Project_Type','Science_Themes'],
-    //   label: 'Search NESC Projects',
-    //   formatSuggestion: function(feature){
-    //     return feature.properties.Project_Leader + ' - ' + feature.properties.Title;
-    //   }
-    // });
-    //
-    // L.esri.Geocoding.geosearch({
-    //   position: 'topleft',
-    //   // providers: [arcgisOnline, NESCdata]
-    //   providers: [NESCdata]
-    // }).addTo(map);
-
-    //Adding MapZen search because frankly it's superior
+    //Adding MapZen search because frankly it's superior to ESRI's
 
     L.control.geocoder('mapzen-Su28ep2', {
       position: 'topleft',
@@ -190,47 +168,23 @@
       stroke: false,
       weight: 0,
       fillOpacity: 0,
-      // this snippet creates LatLng object 'center'.  apparently can't do this with layer.getBounds().getCenter(); I don't know why.
-    //   onEachFeature: function(feature,layer){
-    //     if (feature.geometry.type = 'Polygon') {
-    //       // console.log(feature.geometry.type);
-    //       var bounds = layer.getBounds();
-    //       var center = bounds.getCenter();
-    //
-    //       // console.log(center);
-    //       // gives LatLng object coordinates just to make sure it's working
-    //
-    //       var centerpoints = L.marker(center);
-    //       centerpointlayer.addLayer(centerpoints);
-    //       // The above creates a single marker for each polygon feature (in Leaflet, called a Layer) and then adds that layer to the featureGroup centerpoint layer, defined below
-    //
-    //       // When clicking on centerpoint, zooms to bounds of polygon above, defined by variable 'bounds'
-    //       // Need to add "back" or "zoom to full map" button.
-    //       // Also need to make centerpoint "disappear" with styling when zoomed in. should be easy.
-    //
-    //       centerpoints.on('click', function(e) {
-    //       map.fitBounds(bounds);
-    //       layer.setStyle({
-    //         fillOpacity: 0.5,
-    //       });
-    //       info.update(layer.feature.properties);
-    //     });
-    //
-    //   };
-    // }
-
-
     }).addTo(map);
 
-    var centerpointlayer = L.layerGroup();
-
+    // Retrieves the selected filter from the query control above and creates JS object from it.
     var sciencetheme = document.getElementById('Science_Themes');
+    // Creates a listener for when content of variable 'sciencetheme'changes
+    // and runs callback function to set the 'where' query for the esri.featureLayer to the
+    // contents of the sciencetheme variable.
     sciencetheme.addEventListener('change', function(){
       ProjectMap.setWhere(sciencetheme.value, function(){
-        // centerpointlayer.clearLayers();
-        console.clear();
-        console.log(sciencetheme.value);
+        // console.clear();
+        // console.log(sciencetheme.value);
       });
+      // for some reason ProjectMap.refresh() is necessary in order to get the centerpoints for the
+      // currently displayed layer to load properly. Otherwise centerpoints (see below) from previous setWhere
+      // are displayed. This could be because ProjectMap.refresh() is what triggers the ProjectMap.on('load'
+      // event to fire below. Unfortunately there's no "change in where" event that I can set up a listener
+      // for and I don't feel like extending methods right now.
       ProjectMap.refresh();
       ProjectMap.eachActiveFeature(function(layer){
         layer.setStyle({
@@ -238,15 +192,10 @@
         })
       });
     });
-    // });
 
+    // Populates the map with centerpoints for filtered features (and all features) above.
     ProjectMap.on('load', function(){
       centerpointlayer.clearLayers();
-      // ProjectMap.setStyle({
-      //   stroke: false,
-      //   weight: 0,
-      //   fillOpacity: 0,
-      // });
       ProjectMap.eachActiveFeature(function(layer){
         console.log(layer.feature.properties.Science_Themes);
         var bounds = layer.getBounds();
@@ -257,20 +206,6 @@
         map.addLayer(centerpointlayer);
 
         centerpoints.on('click', function(e) {
-          // Including the ProjectMap.setstyle method here results in blue outlines being created
-          // whenever layer gets refreshed / .setWhere is invoked above... and then further styling gets ignored
-          // for on.Click events
-          // Have to find way to reset previously selected features / styling of whole layer on each SetWhere and on.click event...
-
-          // ProjectMap.setStyle({
-          //   weight: 0,
-          //   fillOpacity: 0,
-          // });
-          // ProjectMap.setFeatureStyle(layer.feature.properties.OBJECTID,{
-          //   stroke: false,
-          //   weight: 0,
-          //   fillOpacity: 0,
-          // });
           info.update(layer.feature.properties);
           map.fitBounds(bounds);
           ProjectMap.eachActiveFeature(function(layer){
@@ -285,28 +220,9 @@
       });
     });
 
-    //Creating the markerClusters
-    // var selected
+    var centerpointlayer = L.layerGroup();
 
-
-
-    // centerpointlayer.on('click', function(e) {
-    //   if (selected){
-    //     ProjectMap.resetStyle(selected)
-    //   }
-    //   selected = e.layer
-    //   map.fitBounds(bounds);
-    //   selected.setStyle({
-    //     fillOpacity: 0.5,
-    //   });
-    // info.update(ProjectMap.layer.feature.properties);
-    // });
-
-
-
-
-
-
+    // Clustering of the centerpoints
     var clusters = L.markerClusterGroup.layerSupport({
       showCoverageOnHover: false,
       // disableClusteringAtZoom: 6

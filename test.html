@@ -1,4 +1,7 @@
 <!doctype html>
+
+<!-- Test to see if I can use a different event listener for loading centerpoints with filters... -->
+
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -20,12 +23,8 @@
   <script src="https://unpkg.com/esri-leaflet@2.0.8/dist/esri-leaflet.js"></script>
 
   <!-- Loading Mapzen geocoding plugin for search -->
-  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-geocoder-mapzen/1.9.2/leaflet-geocoder-mapzen.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-geocoder-mapzen/1.9.2/leaflet-geocoder-mapzen.js"></script> -->
-
- <!-- Load Esri Leaflet Geocoder from CDN -->
- <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.2.6/dist/esri-leaflet-geocoder.css">
-   <script src="https://unpkg.com/esri-leaflet-geocoder@2.2.6"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-geocoder-mapzen/1.9.2/leaflet-geocoder-mapzen.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-geocoder-mapzen/1.9.2/leaflet-geocoder-mapzen.js"></script>
 
   <!-- Loading Leaflet.zoomhome (stored locally) -->
   <link rel="stylesheet" href="scripts/leaflet.zoomhome.css"/>
@@ -74,11 +73,12 @@
       center: [43.726372, -79.405235],
       zoom: 5,
       zoomControl: false,
+
     });
+    // Loading ESRI topo basemap from ArcOnline as baselayer
+    var esriTopo = L.esri.basemapLayer('Topographic').addTo(map);
 
-    //-------------------------
-
-    // MAP CONTROLS
+    // Loading controls
     var zoomHome = L.Control.zoomHome({
       position: 'topleft',
       homeCoordinates: [42.389810, -72.524684],
@@ -113,34 +113,6 @@
 
     info.addTo(map);
 
-    // ESRI FEATURE LAYER AND MAP SEARCH
-
-    var arcgisOnline = L.esri.Geocoding.arcgisOnlineProvider();
-
-    var searchControl = L.esri.Geocoding.geosearch({
-      expanded: true,
-      placeholder: 'Search NECSC Projects / places or addresses',
-      providers: [
-        arcgisOnline,
-        L.esri.Geocoding.featureLayerProvider({
-          url: 'https://services.arcgis.com/2gdL2gxYNFY2TOUb/arcgis/rest/services/NECSC_Test_Data/FeatureServer/1',
-          searchFields: ['Title', 'Affiliations', 'Body', 'Partners', 'Project_Investigators', 'Project_Leader', 'Science_Themes', 'Project_Type'],
-          label: 'NESC Projects',
-          bufferRadius: 5000,
-          formatSuggestion: function(feature){
-            return feature.properties.Project_Leader + ' - ' + feature.properties.Title;
-          }
-        })
-      ]
-    }).addTo(map);
-
-    //-------------------------
-
-  //MAP LAYERS
-
-    // Loading ESRI topo basemap from ArcOnline as baselayer
-    var esriTopo = L.esri.basemapLayer('Topographic').addTo(map);
-
     // Load the project layer as object with all of the projects but do not display it on the map
     var ProjectMap = L.esri.featureLayer ({
       url: 'https://services.arcgis.com/2gdL2gxYNFY2TOUb/arcgis/rest/services/NECSC_Test_Data/FeatureServer/1',
@@ -148,9 +120,31 @@
       stroke: false,
       weight: 0,
       fillOpacity: 0,
-    }).addTo(map);
+      onEachFeature: function(feature,layer){
+        // ProjectMap.on('load',function(){
+          // centerpointlayer.clearLayers();
+          var bounds = layer.getBounds();
+          var center = bounds.getCenter();
+          var centerpoints = L.marker(center);
 
-  // ENABLING THE MAP FILTER
+          centerpointlayer.addLayer(centerpoints);
+          map.addLayer(centerpointlayer);
+
+          centerpoints.on('click', function(e) {
+            info.update(layer.feature.properties);
+            map.fitBounds(bounds);
+            ProjectMap.eachActiveFeature(function(layer){
+              layer.setStyle({
+                fillOpacity: 0,
+              })
+            });
+            layer.setStyle({
+              fillOpacity: 0.5,
+            });
+          });
+        // });
+      }
+    }).addTo(map);
 
     // Retrieves the selected filter from the query control above and creates JS object from it.
     var sciencetheme = document.getElementById('Science_Themes');
@@ -167,42 +161,68 @@
       // are displayed. This could be because ProjectMap.refresh() is what triggers the ProjectMap.on('load'
       // event to fire below. Unfortunately there's no "change in where" event that I can set up a listener
       // for and I don't feel like extending methods right now.
-      ProjectMap.refresh();
-      ProjectMap.eachActiveFeature(function(layer){
-        layer.setStyle({
-          fillOpacity: 0,
-        })
-      });
+      // ProjectMap.refresh();
+      // centerpointlayer.clearLayers();
+      // ProjectMap.on('load', function(){
+
+        ProjectMap.eachActiveFeature(function(layer){
+          layer.setStyle({
+            fillOpacity: 0,
+          });
+          var bounds = layer.getBounds();
+          var center = bounds.getCenter();
+          var centerpoints = L.marker(center);
+
+          centerpointlayer.addLayer(centerpoints);
+          map.addLayer(centerpointlayer);
+
+          centerpoints.on('click', function(e) {
+            info.update(layer.feature.properties);
+            map.fitBounds(bounds);
+
+            ProjectMap.eachActiveFeature(function(layer){
+              layer.setStyle({
+                fillOpacity: 0,
+              })
+            });
+            layer.setStyle({
+              fillOpacity: 0.5,
+            });
+          });
+        });
+      // });
     });
 
     // Populates the map with centerpoints for filtered features (and all features) above.
-    ProjectMap.on('load', function(){
-      centerpointlayer.clearLayers();
-      ProjectMap.eachActiveFeature(function(layer){
-        // console.log(layer.feature.properties.Science_Themes);
-        var bounds = layer.getBounds();
-        var center = bounds.getCenter();
-        var centerpoints = L.marker(center);
-
-        centerpointlayer.addLayer(centerpoints);
-        map.addLayer(centerpointlayer);
-
-        centerpoints.on('click', function(e) {
-          info.update(layer.feature.properties);
-          map.fitBounds(bounds);
-          ProjectMap.eachActiveFeature(function(layer){
-            layer.setStyle({
-              fillOpacity: 0,
-            })
-          });
-          layer.setStyle({
-            fillOpacity: 0.5,
-          });
-        });
-      });
-    });
-
-  // CENTERPOINT LAYER
+    // ProjectMap.on('load', function(){
+    // sciencetheme.addEventListener('change', function(){
+    //   centerpointlayer.clearLayers();
+    //   ProjectMap.on('load', function(){
+    //     centerpointlayer.clearLayers();
+    //     ProjectMap.eachActiveFeature(function(layer){
+    //       // console.log(layer.feature.properties.Science_Themes);
+    //       var bounds = layer.getBounds();
+    //       var center = bounds.getCenter();
+    //       var centerpoints = L.marker(center);
+    //
+    //       centerpointlayer.addLayer(centerpoints);
+    //       map.addLayer(centerpointlayer);
+    //
+    //       centerpoints.on('click', function(e) {
+    //         info.update(layer.feature.properties);
+    //         map.fitBounds(bounds);
+    //         ProjectMap.eachActiveFeature(function(layer){
+    //           layer.setStyle({
+    //             fillOpacity: 0,
+    //           })
+    //         });
+    //         layer.setStyle({
+    //           fillOpacity: 0.5,
+    //         });
+    //       });
+    //     });
+    //   });
+    // });
 
     var centerpointlayer = L.layerGroup();
 

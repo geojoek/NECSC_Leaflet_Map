@@ -134,6 +134,17 @@
       ]
     }).addTo(map);
 
+    searchControl.on('results', function(){
+      ProjectMap.eachActiveFeature(function(layer){
+        layer.setStyle({
+          fillOpacity: 0.0,
+        });
+      });
+      layer.setStyle({
+        fillOpacity: 0.5,
+      });
+    });
+
     //-------------------------
 
   //MAP LAYERS

@@ -92,6 +92,9 @@
     //   position: 'topleft',
     // }).addTo(map);
 
+
+    // INFORMATION CONTROL
+
     // control that shows Project Data on click
     // This control lifted from http://leafletjs.com/examples/choropleth/
     // Still not sure precisely how it works- have to investigate
@@ -115,13 +118,16 @@
 
     // ESRI FEATURE LAYER AND MAP SEARCH
 
+    // Setting up the control and its options
     var arcgisOnline = L.esri.Geocoding.arcgisOnlineProvider();
-
     var searchControl = L.esri.Geocoding.geosearch({
       expanded: true,
-      placeholder: 'Search NECSC Projects / places or addresses',
+      placeholder: 'Search NECSC Projects',
+      zoomToResult: true,
+      collapseAfterResult: true,
+      allowMultipleResults: false,
       providers: [
-        arcgisOnline,
+        // arcgisOnline,
         L.esri.Geocoding.featureLayerProvider({
           url: 'https://services.arcgis.com/2gdL2gxYNFY2TOUb/arcgis/rest/services/NECSC_Test_Data/FeatureServer/1',
           searchFields: ['Title', 'Affiliations', 'Body', 'Partners', 'Project_Investigators', 'Project_Leader', 'Science_Themes', 'Project_Type'],
@@ -134,24 +140,49 @@
       ]
     }).addTo(map);
 
-    searchControl.on('results', function(){
-      ProjectMap.eachActiveFeature(function(layer){
-        layer.setStyle({
-          fillOpacity: 0.0,
+    // Setting up map behavior for clicking on the search control results
+    var searchResultPolygons = L.layerGroup();
+    searchResultPolygons.addTo(map);
+
+    searchControl.on('results', function(data){
+      var searchResultData = data.results[0].properties
+      // Note to self: [0] after results is required to tell Leaflet which feature to get properties.etc...
+      // from.  Else properties will be undefined.  Here you're telling it to just pull .properties.Title from
+      // the first feature in the results object (an array) that is returned, designated 0.
+      // Forcing UX here to only return one result, but as of yet don't think users will want More
+      // than one result showing for a search - Choosing to keep things simple for now.
+      if (data.results.length > 0) {
+        info.update(searchResultData)
+        ProjectMap.eachActiveFeature(function(layer){
+          layer.setStyle({
+          fillOpacity: 0,
+          });
+          // Note: Throughout script using this for styling ProjectMap w/ each change as opposed to
+          // ProjectMap.setStyle, as it seems to over-ride any other setStyle functions in the entire
+          // script and basically brakes changes in styling invoked anywhere else in script.
         });
-      });
-      layer.setStyle({
-        fillOpacity: 0.5,
-      });
+        searchResultPolygons.clearLayers();
+        searchResultPolygons.addLayer(L.geoJSON(data.results[0].geojson, {
+          weight: 0,
+          fillOpacity: 0.5,
+        }));
+      };
     });
+
+    // Do not need to add listener here (I think), or L.control, to clear search results, as clicking
+    // on centerpoint of any other feature or changing filters clears them.
+
+
 
     //-------------------------
 
   //MAP LAYERS
 
+    // BASEMAP
     // Loading ESRI topo basemap from ArcOnline as baselayer
     var esriTopo = L.esri.basemapLayer('Topographic').addTo(map);
 
+    // DATA
     // Load the project layer as object with all of the projects but do not display it on the map
     var ProjectMap = L.esri.featureLayer ({
       url: 'https://services.arcgis.com/2gdL2gxYNFY2TOUb/arcgis/rest/services/NECSC_Test_Data/FeatureServer/1',
@@ -159,6 +190,7 @@
       stroke: false,
       weight: 0,
       fillOpacity: 0,
+      fillColor: null,
     }).addTo(map);
 
   // ENABLING THE MAP FILTER
@@ -170,20 +202,20 @@
     // contents of the sciencetheme variable.
     sciencetheme.addEventListener('change', function(){
       ProjectMap.setWhere(sciencetheme.value, function(){
-        // console.clear();
-        // console.log(sciencetheme.value);
       });
       // for some reason ProjectMap.refresh() is necessary in order to get the centerpoints for the
-      // currently displayed layer to load properly. Otherwise centerpoints (see below) from previous setWhere
-      // are displayed. This could be because ProjectMap.refresh() is what triggers the ProjectMap.on('load'
-      // event to fire below. Unfortunately there's no "change in where" event that I can set up a listener
-      // for and I don't feel like extending methods right now.
+      // currently displayed layer to load properly. This creates a huge lag in the centerpoints loading.
+      // Otherwise centerpoints (see below) from previous setWhere
+      // are displayed. This is likely because ProjectMap.refresh() is what triggers the ProjectMap.on('load'
+      // event to fire below. Unless I'm missing something obvious, Unfortunately there's no straightforward
+      // "change in where" event in Leaflet / ESRI-Leaflet that I can set up a listener for.
       ProjectMap.refresh();
       ProjectMap.eachActiveFeature(function(layer){
         layer.setStyle({
           fillOpacity: 0,
-        })
+        });
       });
+      searchResultPolygons.clearLayers();
     });
 
     // Populates the map with centerpoints for filtered features (and all features) above.
@@ -193,7 +225,13 @@
         // console.log(layer.feature.properties.Science_Themes);
         var bounds = layer.getBounds();
         var center = bounds.getCenter();
-        var centerpoints = L.marker(center);
+        var centerpoints = L.circleMarker(center, {
+          radius: 10,
+          fillOpacity: 0.75,
+          fillColor: '#76db58',
+          color: '#76db58',
+          opacity: 0.5,
+        });
 
         centerpointlayer.addLayer(centerpoints);
         map.addLayer(centerpointlayer);
@@ -201,6 +239,7 @@
         centerpoints.on('click', function(e) {
           info.update(layer.feature.properties);
           map.fitBounds(bounds);
+          searchResultPolygons.clearLayers();
           ProjectMap.eachActiveFeature(function(layer){
             layer.setStyle({
               fillOpacity: 0,
@@ -220,7 +259,8 @@
     // Clustering of the centerpoints
     var clusters = L.markerClusterGroup.layerSupport({
       showCoverageOnHover: false,
-      disableClusteringAtZoom: 13
+      disableClusteringAtZoom: 13,
+      spiderfyDistanceMultiplier: 2,
       // zoomToBoundsOnClick: false,
     });
     clusters.addLayer(centerpointlayer);

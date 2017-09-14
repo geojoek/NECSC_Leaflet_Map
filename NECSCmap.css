@@ -1,4 +1,4 @@
-/* Styling the map div */
+/*  map div */
     html,
     body,
     #map {
@@ -8,13 +8,13 @@
       padding: 0;
     }
 
-  /* css styling of the information div */
+  /* information div */
   .info {
       padding: 6px 8px;
       font: 14px/16px Arial, Helvetica, sans-serif;
       background: white;
       background: rgba(255,255,255,1);
-      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      box-shadow: 0 0 15px;
       border-radius: 5px;
       width: 300px;
   }
@@ -23,7 +23,7 @@
       color: #777;
   }
 
-  /* Styling the filter box which uses query extension of L.esri.featureLayer */
+  /* filter box which uses query extension of L.esri.featureLayer */
     #query {
       position: absolute;
       top: 10px;
@@ -33,7 +33,7 @@
       font: 14px/16px Arial, Helvetica, sans-serif;
       background: white;
       background: rgba(255,255,255,1);
-      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      box-shadow: 0 0 15px;
       border-radius: 5px;
     }
 

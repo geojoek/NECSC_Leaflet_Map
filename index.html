@@ -19,10 +19,6 @@
   <!-- Loading ESRI Leaflet -->
   <script src="https://unpkg.com/esri-leaflet@2.0.8/dist/esri-leaflet.js"></script>
 
-  <!-- Loading Mapzen geocoding plugin for search -->
-  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-geocoder-mapzen/1.9.2/leaflet-geocoder-mapzen.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-geocoder-mapzen/1.9.2/leaflet-geocoder-mapzen.js"></script> -->
-
  <!-- Load Esri Leaflet Geocoder from CDN -->
  <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.2.6/dist/esri-leaflet-geocoder.css">
    <script src="https://unpkg.com/esri-leaflet-geocoder@2.2.6"></script>
@@ -45,11 +41,12 @@
 </head>
 
 <body>
+
   <!-- Creating container for the map -->
   <div id="map"></div>
+
   <!-- Creating the div for the query box and populating filters -->
   <div id="query" class="leaflet-bar">
-
   <label>
     <em>Filter by:</em></br>Science Theme
     <select id="Science_Themes">
@@ -61,22 +58,19 @@
       <option value="Science_Themes LIKE '%Climate projections and assessments%'">Climate projections and assessments</option>
       <option value="Science_Themes LIKE '%Ecological vulnerability and species response to climate variability and change%'">Ecological vulnerability and species response to climate variability and change</option>
       <option value="Science_Themes LIKE '%Impacts of climate variability and change on cultural resources%'">Impacts of climate variability and change on cultural resources</option>
-      <!-- <option value="Science_Themes='Climate projections and assessments'">West</option> -->
     </select>
   </label>
   </div>
 
   <!-- Creating the map object / script -->
-
   <script>
+
   // This creates the map object itself
     var map = L.map('map', {
       center: [43.726372, -79.405235],
       zoom: 5,
       zoomControl: false,
     });
-
-    //-------------------------
 
     // MAP CONTROLS
     var zoomHome = L.Control.zoomHome({
@@ -85,13 +79,6 @@
       homeZoom: 5
     });
     zoomHome.addTo(map);
-
-    //Adding MapZen search because frankly it's superior to ESRI's
-
-    // L.control.geocoder('mapzen-Su28ep2', {
-    //   position: 'topleft',
-    // }).addTo(map);
-
 
     // INFORMATION CONTROL
 
@@ -172,10 +159,6 @@
     // Do not need to add listener here (I think), or L.control, to clear search results, as clicking
     // on centerpoint of any other feature or changing filters clears them.
 
-
-
-    //-------------------------
-
   //MAP LAYERS
 
     // BASEMAP
@@ -253,7 +236,6 @@
     });
 
   // CENTERPOINT LAYER
-
     var centerpointlayer = L.layerGroup();
 
     // Clustering of the centerpoints

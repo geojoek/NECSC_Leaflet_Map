@@ -1,12 +1,29 @@
 /*  map div */
     html,
     body,
-    #map {
+
+    /*#panel {
+      float: left;
+      width: 29%;
       height: 100%;
-      width: 100%;
+      border: 1px;
+      padding: 0.5em 0 0 .5em;
+      min-width: 300px;
+
+    }*/
+
+    #map {
+      float: right;
+      height: 100%;
+      width: 70%;
       margin: 0;
       padding: 0;
+
     }
+
+/* intro panel on left */
+
+
 
   /* information div */
   .info {
@@ -26,7 +43,7 @@
   /* filter box which uses query extension of L.esri.featureLayer */
     #query {
       position: absolute;
-      top: 10px;
+      top: 20px;
       left: 50px;
       z-index: 500;
       padding: 6px 8px;

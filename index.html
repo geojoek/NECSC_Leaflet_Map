@@ -6,7 +6,7 @@
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
 
   <!-- Loading Font Awesome -->
-  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"/>
 
   <!-- Loading Leaflet library -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
@@ -184,6 +184,7 @@
     // and runs callback function to set the 'where' query for the esri.featureLayer to the
     // contents of the sciencetheme variable.
     sciencetheme.addEventListener('change', function(){
+      // This references a filter box set up in a separate div
       ProjectMap.setWhere(sciencetheme.value, function(){
       });
       // for some reason ProjectMap.refresh() is necessary in order to get the centerpoints for the

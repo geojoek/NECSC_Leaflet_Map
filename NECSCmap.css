@@ -1,34 +1,82 @@
 /*  map div */
-    html,
-    body,
+html, body {
+  height: 100%;
+  width: 100%
+  margin-left: 0px;
+}
 
-    /*#panel {
+  /*parent = body*/
+    #panel {
       float: left;
-      width: 29%;
-      height: 100%;
-      border: 1px;
-      padding: 0.5em 0 0 .5em;
-      min-width: 300px;
-
-    }*/
-
-    #map {
-      /*float: right;*/
-      height: 100%;
-      width: 100%;
-      margin: 0;
-      padding: 0;
-
+      width: 25%;
+      height: 98%;
+      background: rgba(255,255,255,1);
+      margin-right: 5px;
     }
 
-/* intro panel on left */
+      /*parent = #panel*/
+        .necsc-logo {
+          display: block;
+          margin-left: auto;
+          margin-right: auto;
+          width: 100%;
+        }
 
+        #text {
+          width: 100%;
+          font: 14px/16px proxima-nova,"Helvetica Neue",Helvetica,Arial,sans-serif;
+          text-rendering: optimizeLegibility;
+          color: #333;
+          padding: 1px 5px 1px 5px;
+          background: #e5eedd;
+          border-radius: 5px;
+          margin-top: 5px;
+          box-shadow: 0 0 5px;
+        }
 
+        /* filter box which uses query extension of L.esri.featureLayer */
+          #query {
+            width: 100%;
+            margin-top: 5px;
+            font: 14px/16px proxima-nova,"Helvetica Neue",Helvetica,Arial,sans-serif;
+            color: #333;
+            text-rendering: optimizeLegibility;
+            padding: 5px 5px 5px 5px;
+            background: #d3e3f8;
+            border-radius: 5px;
+            box-shadow: 0 0 5px;
+          }
 
-  /* information div */
+          #query select {
+            font: 13px/16px proxima-nova,"Helvetica Neue",Helvetica,Arial,sans-serif
+          }
+
+          #Science_Themes {
+            width: 100%;
+          }
+
+  /*parent = body*/
+  #map-wrapper {
+    float: right;
+    width: 73%;
+    height: 98%;
+    margin: 0 5px 0 5px;
+    padding: 0;
+    box-shadow: 0 0 5px;
+    border-radius: 5px;
+  }
+    /*parent = map-wrapper*/
+      #map {
+        width: 100%;
+        height: 100%;
+      }
+
+  /* information div referenced by leflet */
   .info {
       padding: 6px 8px;
-      font: 12px/14px Arial, Helvetica, sans-serif;
+      font: 14px/16px proxima-nova,"Helvetica Neue",Helvetica,Arial,sans-serif;
+      color: #333;
+      text-rendering: optimizeLegibility;
       background: white;
       background: rgba(255,255,255,1);
       box-shadow: 0 0 5px;
@@ -39,21 +87,3 @@
       margin: 0 0 5px;
       color: #777;
   }
-
-  /* filter box which uses query extension of L.esri.featureLayer */
-    #query {
-      position: absolute;
-      top: 20px;
-      left: 50px;
-      z-index: 500;
-      padding: 6px 8px;
-      font: 12px/14px Arial, Helvetica, sans-serif;
-      background: white;
-      background: rgba(255,255,255,1);
-      box-shadow: 0 0 5px;
-      border-radius: 5px;
-    }
-
-    #query select {
-      font-size: 12px;
-    }

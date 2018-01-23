@@ -43,24 +43,45 @@
 <body>
 
   <!-- Creating container for the map -->
-  <div id="map"></div>
+  <div id="panel">
+
+
+    <a href="http://necsc.umass.edu/"><image src="NECSC-logo.png" class="necsc-logo" ></a>
+
+
+    <div id="text">
+
+      <p>This interactive map shows the geographic distribution of the almost 100 projects funded by the <a href="http://necsc.umass.edu/">Northeast Climate Science Center</a> since 2012. Research projects from all seven science themes are spread across the region; some projects can be applied in all 22 states, others focused on sub-regional systems (montane forest systems, specific river basins, or coastal areas, for example). Topically, the research areas are also broad, including climate projections, sea level rise, coastal erosion and inundation, wildlife and fish response, freshwater resources and drought, forest health and distribution, and cultural assets and adaptation. Ultimately, all the projects aim to provide valuable information for local managers, decision makers, and communities to support their choices of the best strategies to prepare for, and adapt to, a changing world.</p>
+
+      <p>To explore the projects on this map, you can hover your mouse around regions of interest, or select for projects that address certain science themes using the drop-down filter menu.  You can zoom in and pan the map, and by clicking on a project, get a summary of the project and find links for more information.</p>
+
+      </div>
+
+    <div id="query"> <!--class="leaflet-bar"-->
+      <label>
+        Filter projects by Science Theme:
+        <select id="Science_Themes">
+          <!-- make sure to encase string values in single quotes for valid sql -->
+          <option value='1=1'>All</option>
+          <option value="Science_Themes LIKE '%Climate impacts on Atlantic and Great Lakes coastal and nearshore environments%'">Climate impacts on Atlantic and Great Lakes coastal and nearshore environments</option>
+          <option value="Science_Themes LIKE '%Climate impacts on freshwater resources and ecosystems%'">Climate impacts on freshwater resources and ecosystems</option>
+          <option value="Science_Themes LIKE '%Climate impacts on land-use and land-cover change%'">Climate impacts on land-use and land-cover change</option>
+          <option value="Science_Themes LIKE '%Climate projections and assessments%'">Climate projections and assessments</option>
+          <option value="Science_Themes LIKE '%Ecological vulnerability and species response to climate variability and change%'">Ecological vulnerability and species response to climate variability and change</option>
+          <option value="Science_Themes LIKE '%Impacts of climate variability and change on cultural resources%'">Impacts of climate variability and change on cultural resources</option>
+        </select>
+      </label>
+    </div>
+
+
+  </div>
+
+  <div id="map-wrapper">
+    <div id="map"></div>
+  </div>
 
   <!-- Creating the div for the query box and populating filters -->
-  <div id="query" class="leaflet-bar">
-  <label>
-    <em>Filter by:</em></br>Science Theme
-    <select id="Science_Themes">
-      <!-- make sure to encase string values in single quotes for valid sql -->
-      <option value='1=1'>All</option>
-      <option value="Science_Themes LIKE '%Climate impacts on Atlantic and Great Lakes coastal and nearshore environments%'">Climate impacts on Atlantic and Great Lakes coastal and nearshore environments</option>
-      <option value="Science_Themes LIKE '%Climate impacts on freshwater resources and ecosystems%'">Climate impacts on freshwater resources and ecosystems</option>
-      <option value="Science_Themes LIKE '%Climate impacts on land-use and land-cover change%'">Climate impacts on land-use and land-cover change</option>
-      <option value="Science_Themes LIKE '%Climate projections and assessments%'">Climate projections and assessments</option>
-      <option value="Science_Themes LIKE '%Ecological vulnerability and species response to climate variability and change%'">Ecological vulnerability and species response to climate variability and change</option>
-      <option value="Science_Themes LIKE '%Impacts of climate variability and change on cultural resources%'">Impacts of climate variability and change on cultural resources</option>
-    </select>
-  </label>
-  </div>
+
 
   <!-- Creating the map object / script -->
   <script>

@@ -137,7 +137,7 @@
       providers: [
         // arcgisOnline,
         L.esri.Geocoding.featureLayerProvider({
-          url: 'https://services.arcgis.com/2gdL2gxYNFY2TOUb/arcgis/rest/services/NECSC_Test_Data/FeatureServer/1',
+          url: 'https://services.arcgis.com/2gdL2gxYNFY2TOUb/arcgis/rest/services/NECSC_Project_Export2/FeatureServer/0',
           searchFields: ['Title', 'Affiliations', 'Body', 'Partners', 'Project_Investigators', 'Project_Leader', 'Science_Themes', 'Project_Type'],
           label: 'NESC Projects',
           bufferRadius: 5000,
@@ -189,7 +189,7 @@
     // DATA
     // Load the project layer as object with all of the projects but do not display it on the map
     var ProjectMap = L.esri.featureLayer ({
-      url: 'https://services.arcgis.com/2gdL2gxYNFY2TOUb/arcgis/rest/services/NECSC_Test_Data/FeatureServer/1',
+      url: 'https://services.arcgis.com/2gdL2gxYNFY2TOUb/arcgis/rest/services/NECSC_Project_Export2/FeatureServer/0',
       //making the polygons invisible
       stroke: false,
       weight: 0,

@@ -1,4 +1,4 @@
-_Note 9/2021: For various reasons this project had to be abandoned and is no longer maintained. 
+_Note 9/2021: For various reasons this project had to be abandoned and is no longer maintained._
 
 This is an in-progress map which can be viewed <a href="https://geojoek.github.io/NECSC_Leaflet_Map/">here</a> on Github Pages.
 
